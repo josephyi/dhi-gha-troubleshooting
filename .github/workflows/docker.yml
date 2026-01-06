@@ -84,6 +84,8 @@ jobs:
           buildkitd-config-inline: |
             [registry."dhi.io"]
               mirrors = ["dhi.io"]
+            [registry."gcr.io"]
+              mirrors = ["gcr.io"]
       - name: Run DHI Image
         run: |
           docker buildx inspect
