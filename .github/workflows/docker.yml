@@ -35,6 +35,7 @@ jobs:
           docker buildx build \
             --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test \
             --load \
+            --target=builder \
             .
       - name: Build and Load Image
         id: build
