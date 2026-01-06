@@ -30,7 +30,14 @@ jobs:
         run: |
           docker buildx inspect
           docker run --rm dhi.io/python:3.13 python -c "print('Hello from DHI')"
-      - name: Build with buildx directly
+      - name: Build with buildx targeting builder stage
+        run: |
+          docker buildx build \
+            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test \
+            --load \
+            --target=aot-cache-training-runner \
+            .
+      - name: Build with buildx targeting aot-cache-training-runner stage
         run: |
           docker buildx build \
             --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test \
