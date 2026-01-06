@@ -35,7 +35,7 @@ jobs:
           docker buildx build \
             --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test \
             --load \
-            --target=builder \
+            --target=aot-cache-training-runner \
             .
       - name: Build and Load Image
         id: build
