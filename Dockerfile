@@ -1,10 +1,6 @@
 # syntax=docker/dockerfile:1
 
-ARG BUILDER_IMAGE=dhi.io/eclipse-temurin:25-jdk-debian13-dev
-ARG AOT_CACHE_TRAINING_RUNNER_IMAGE=dhi.io/debian-base:trixie
-ARG RUNTIME_IMAGE=gcr.io/distroless/java-base-debian13
-
-FROM ${BUILDER_IMAGE} AS builder
+FROM dhi.io/eclipse-temurin:25-jdk-debian13-dev AS builder
 
 # jlink requires binutils to be installed
 RUN apt update && apt-get install -y -qq binutils
@@ -38,7 +34,7 @@ RUN --mount=type=cache,target=/root/.gradle \
        --add-modules "${JAVA_RUNTIME_MODULES}" \
        --output javaruntime
 
-FROM ${AOT_CACHE_TRAINING_RUNNER_IMAGE} AS aot-cache-training-runner
+FROM dhi.io/debian-base:trixie AS aot-cache-training-runner
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 WORKDIR /workspace
@@ -49,7 +45,7 @@ COPY --link --from=builder /workspace/extracted/snapshot-dependencies ./
 COPY --link --from=builder /workspace/extracted/application ./
 RUN java -XX:AOTCacheOutput=app.aot -Dspring.context.exit=onRefresh -jar application.jar
 
-FROM ${RUNTIME_IMAGE} AS runtime
+FROM gcr.io/distroless/java-base-debian13 AS runtime
 ENV JAVA_HOME=/opt/java/openjdk
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 WORKDIR /app
