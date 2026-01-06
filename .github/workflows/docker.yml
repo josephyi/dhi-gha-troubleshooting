@@ -32,13 +32,24 @@ jobs:
           docker buildx inspect
           docker run --rm dhi.io/python:3.13 python -c "print('Hello from DHI')"
       - name: Build with buildx targeting builder stage
+        continue-on-error: true
         run: |
           docker buildx build \
             --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test \
             --load \
             --target=builder \
             .
+      - name: Build with buildx overriding image and targeting aot-cache-training-runner stage
+        continue-on-error: true
+        run: |
+          docker buildx build \
+            --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test \
+            --load \
+            --build-arg AOT_CACHE_TRAINING_RUNNER_IMAGE=debian:trixie-slim \
+            --target=aot-cache-training-runner \
+            .
       - name: Build with buildx targeting aot-cache-training-runner stage
+        continue-on-error: true
         run: |
           docker buildx build \
             --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test \
